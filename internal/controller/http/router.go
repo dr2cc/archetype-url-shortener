@@ -4,6 +4,8 @@ package http
 import (
 	"net/http"
 
+	"github.com/ansrivas/fiberprometheus/v2"
+
 	// // Swagger docs.
 	// _ "arch/docs"
 	"arch/internal/controller/http/middleware"
@@ -26,21 +28,27 @@ func NewRouter(app *fiber.App, l logger.Interface, t usecase.Translation) {
 	app.Use(middleware.Logger(l))
 	app.Use(middleware.Recovery(l))
 
-	// // Prometheus - это система мониторинга, разработанная для наблюдения за распределенными системами.
-	// // Он предоставляет инструменты для сбора и хранения временных рядов данных,
-	// // а также для создания пользовательских запросов и алертинга на основе этих данных.
-	// // Prometheus предлагает нативную поддержку для сбора метрик от приложений, что делает его идеальным выбором для мониторинга Go-приложений.
-	// //
-	// // Prometheus metrics
-	// prometheus := fiberprometheus.New("my-service-name")
-	// prometheus.RegisterAt(app, "/metrics")
-	// app.Use(prometheus.Middleware)
+	// Prometheus - это система мониторинга, разработанная для наблюдения за распределенными системами.
+	// Он предоставляет инструменты для сбора и хранения временных рядов данных,
+	// а также для создания пользовательских запросов и алертинга на основе этих данных.
+	// Prometheus предлагает нативную поддержку для сбора метрик от приложений, что делает его идеальным выбором для мониторинга Go-приложений.
+	//
+	// Prometheus metrics
+	prometheus := fiberprometheus.New("my-service-name")
+	prometheus.RegisterAt(app, "/metrics")
+	app.Use(prometheus.Middleware)
 
 	// // Swagger
 	// app.Get("/swagger/*", swagger.HandlerDefault)
 
 	// K8s probe
 	app.Get("/healthz", func(ctx *fiber.Ctx) error { return ctx.SendStatus(http.StatusOK) })
+	//
+	// https://habr.com/ru/companies/otus/articles/841194/
+	app.Get("/products/:id", func(c *fiber.Ctx) error {
+		id := c.Params("id") // извлечение параметра "id" из URL
+		return c.SendString("Product ID: " + id)
+	})
 
 	// Routers
 	apiV1Group := app.Group("/v1")
