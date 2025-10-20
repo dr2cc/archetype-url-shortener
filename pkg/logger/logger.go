@@ -42,13 +42,8 @@ func New(level string) *Logger {
 	}
 
 	zerolog.SetGlobalLevel(l)
-	//logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
 
-	// skipFrameCount совсем не знаю, что это.
-	// Если будут вопросы комментировать в первую очередь его и logger := ниже
-	// logger := выше (закомментированный), это для если skipFrameCount нет
 	skipFrameCount := 3
-
 	logger := zerolog.New(os.Stdout).With().Timestamp().CallerWithSkipFrameCount(zerolog.CallerSkipFrameCount + skipFrameCount).Logger()
 
 	return &Logger{
