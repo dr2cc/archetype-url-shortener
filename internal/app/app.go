@@ -3,29 +3,23 @@ package app
 // 🧹🏦
 
 import (
+	"arch/config"
 	handler "arch/internal/controller"
-	"arch/internal/usecase/logger"
+	"arch/pkg/logger"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/go-chi/chi"
 )
 
-func Run() {
-	// // 1. Раздел экземпляра роутера
-
-	// // 2. Раздел экземпляра "приложения" (структуры в которой определим все сущности проекта)
-	// // - логгер (уже есть!). Виды экземпляров логгера вынесу в оттдельную структуру, а потом уже ее сюда
-	// // - видимо и роутер сюда (http)
-	// // - db
-	// // - рандомайзер
-	// // -
+// Run creates objects via constructors.
+func Run(cfg *config.Config) {
+	l := logger.New(cfg.Log.Level)
 
 	// creating an instance of the main application
 	example := App{
-		InfoLogger:  logger.NewLogger("INFO: "),
-		ErrorLogger: logger.NewLogger("ERROR: "),
+		InfoLogger:  logger.New("INFO: "),
+		ErrorLogger: logger.New("ERROR: "),
 	}
 
 	// // 3. Define routes
@@ -55,8 +49,8 @@ func Run() {
 	r.Handle("/Handle", &example) // ❗ В таком виде работает! Что это дает пока не понял..
 
 	// // 4. Раздел сервера
-
-	example.InfoLogger.Println("The server is starting")
+	l.Info("The server is starting")
+	//example.InfoLogger.Println("The server is starting")
 
 	// // The handler is typically nil, in which case [DefaultServeMux] is used.
 	// // Обработчик (второй параметр) по умолчанию равен nil, в этом случае используется [DefaultServeMux].
@@ -67,19 +61,19 @@ func Run() {
 
 	// Запуск сервера с обработкой ошибки
 	if err := http.ListenAndServe("localhost:8080", r); err != nil {
-		example.ErrorLogger.Fatal(err)
+		l.Fatal(fmt.Errorf("app - Run - http.ListenAndServe: %w", err))
 	}
 }
 
 // Тип реализующий два экземпляра логгера,
 // а с методом ServeHTTP он (тип) еще и считается http.Handler
 type App struct {
-	InfoLogger  *log.Logger
-	ErrorLogger *log.Logger
+	InfoLogger  *logger.Logger
+	ErrorLogger *logger.Logger
 }
 
 func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	a.InfoLogger.Println("I use Handler!")
+	a.InfoLogger.Info("I use Handler!")
 	fmt.Fprintln(w, "I use Handler!")
 }
 
