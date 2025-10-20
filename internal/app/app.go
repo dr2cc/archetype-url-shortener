@@ -41,6 +41,10 @@ func Run(cfg *config.Config) {
 	// }
 
 	// HTTP Server
+	// handler := gin.New()
+	// v1.NewRouter(handler, l, translationUseCase)
+	// httpServer := httpserver.New(handler, httpserver.Port(cfg.HTTP.Port))
+	//
 	httpServer := httpserver.New(httpserver.Port(cfg.HTTP.Port))
 	v1.NewRouter(httpServer.App, l, translationUseCase)
 
