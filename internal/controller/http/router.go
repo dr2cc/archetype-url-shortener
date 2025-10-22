@@ -45,6 +45,10 @@ func NewRouter(app *fiber.App, l logger.Interface, t usecase.Translation) {
 	// app.Get("/swagger/*", swagger.HandlerDefault)
 
 	// K8s probe
+	// Пишут, что это "зонд K8s"
+	// Он относится к стандартной конечной точке HTTP,
+	// которую вы создаете и предоставляете Kubernetes для проверки работоспособности.
+	// В общем если сервер поднят, то возвращает OK
 	app.Get("/healthz", func(ctx *fiber.Ctx) error { return ctx.SendStatus(http.StatusOK) })
 	//
 	// https://habr.com/ru/companies/otus/articles/841194/
