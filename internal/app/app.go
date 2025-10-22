@@ -34,6 +34,11 @@ func Run(cfg *config.Config) {
 		webapi.New(),
 	)
 
+	// RabbitMQ RPC Server
+	// Отсюда удалил, в clean реализован.
+	// Веб-интерфейс RabbitMQ доступен в браузере по ссылке http://127.0.0.1:15672/
+	// https://habr.com/ru/companies/slurm/articles/704208/
+
 	// // creating an instance of the main application
 	// example := App{
 	// 	InfoLogger:  logger.New("INFO: "),
